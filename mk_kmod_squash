@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# create kmod  package - merged /usr version
+
+
+if [ ! -d tar-install ] ; then 
+	echo "tar-install dir not found, first do "make tar-pkg" target. run build.sh first" 
+	exit 1
+fi
+
+if [ ! -f arch/x86/boot/bzImage ] ; then 
+	echo "bzImage not foud, build kernel first, aborting"
+    exit 1;
+fi 
+
+if [ -f kmoid.squash ] ; then rm -rf kmod.squash ; fi
+
+mkdir -p tmp/usr/ 
+
+
+
+
+cp -a tar-install/lib tmp/usr/
+cd tmp/
+ln -s usr/lib lib
+cd -
+fakeroot chown -R root.root tmp/
+fakeroot /usr/bin/mksquashfs tmp/  kmod.squash -comp xz
+rm -rf tmp
+
+echo "all done"
+exit 0
